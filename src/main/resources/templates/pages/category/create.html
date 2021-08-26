@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
+      layout:decorate="~{basic}">
+
+<th:block layout:fragment="content_styles">
+    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+</th:block>
+
+<th:block layout:fragment="content_home">
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Category create</h4>
+<!--                    <h6 class="card-subtitle">Bootstrap Form Validation check the <a href="http://reactiveraven.github.io/jqBootstrapValidation/">official website </a></h6>-->
+                    <!--/*@thymesVar id="reqCategory" type="reqCategory"*/-->
+                    <form th:action="@{/category/save}" th:object="${reqCategory}" method="post" class="m-t-40" novalidate>
+                        <div class="form-group">
+                            <h5>Select Parent Category Id <span class="text-danger">*</span></h5>
+                            <div class="controls">
+                                <input type="text" th:field="*{parentId}" name="parentId" id="parentId" class="form-control" required data-validation-required-message="This field is required">
+                            </div>
+<!--                            <div class="form-control-feedback"><small>Add <code>required</code> attribute to field for required validation.</small></div>-->
+                        </div>
+                        <div class="form-group">
+                            <h5>Category Name <span class="text-danger">*</span></h5>
+                            <div class="controls">
+                                <input type="text" th:field="*{name}" name="name" id="name" class="form-control" required data-validation-required-message="This field is required">
+                            </div>
+<!--                            <div class="form-control-feedback"><small>Add <code>required</code> attribute to field for required validation.</small></div>-->
+                        </div>
+                        <div class="text-xs-right">
+                            <button type="submit" class="btn btn-info float-right">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<th:block layout:fragment="content_js">
+    <script src="/assets/js/validation.js"></script>
+    <script>
+        ! function(window, document, $) {
+            "use strict";
+            $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+        }(window, document, jQuery);
+    </script>
+</th:block>
+</html>
