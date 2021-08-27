@@ -9,10 +9,63 @@
 </th:block>
 
 <th:block layout:fragment="content_home">
-    <div class="container">
-        <div class="row  mt-5">
-            <div class="col-md-4 offset-4">
-                <h4 class="text-success">This is Category Page</h4>
+    <!-- Bread crumb and right sidebar toggle -->
+    <!-- ============================================================== -->
+    <div class="row page-titles">
+        <div class="col-md-5 align-self-center">
+            <h3 class="text-themecolor">Category List</h3>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+                <li class="breadcrumb-item active">Category List</li>
+            </ol>
+        </div>
+        <!-- <div class="col-md-7 align-self-center text-right d-none d-md-block">
+             <button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Create New</button>
+         </div>-->
+        <div class="">
+            <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="col-md-12">
+                        <a href="/category/create" class="btn btn-info float-right" ><i class="fa fa-plus-circle"></i> Create Category</a>
+                    </div>
+
+                    <div class="col-md-8 offset-2 m-5 pr-5">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Name</th>
+                                    <th>Parent Id</th>
+                                    <th>Operations</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="category:${categories}">
+                                    <td th:text="${category.id}"></td>
+                                    <td th:text="${category.name}"></td>
+                                    <td th:text="${category.parentId}"></td>
+                                    <td>
+                                        <a th:href="@{/category/update/{id}(id=${category.id})}" class="btn btn-success">
+                                            <i class="fa fa-edit" aria-hidden="true"></i> Edit
+                                        </a>
+                                        <a th:href="@{/category/delete/{id}(id=${category.id})}" class="btn btn-danger">
+                                            <i class="fa fa-trash" aria-hidden="true"></i> Delete
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

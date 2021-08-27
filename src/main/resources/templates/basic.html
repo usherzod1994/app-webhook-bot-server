@@ -351,7 +351,7 @@
                             <li><a href="#"><a href="/profile" sec:authorize="hasAnyRole('ROLE_USER')">Profile</a> </a></li>
                             <li><a href="#"><a href="/books" sec:authorize="hasAnyRole('ROLE_USER')">Books</a> </a></li>
                             <li><a href="#"><a href="/finance" sec:authorize="hasAnyRole('ROLE_MANAGER')">Finance</a> </a></li>
-                            <li><a href="#"><a href="/category/create" sec:authorize="hasAnyRole('ROLE_MANAGER')">Category</a> </a></li>
+                            <li><a href="#"><a href="/category/list" sec:authorize="hasAnyRole('ROLE_MANAGER')">Category</a></a></li>
                             <li><a href="#"><a href="#" sec:authorize="hasAnyRole('ROLE_MANAGER')">Product</a> </a></li>
                             <li><a href="#"><a href="#" sec:authorize="hasAnyRole('ROLE_MANAGER')">Users</a> </a></li>
                         </ul>
@@ -374,23 +374,7 @@
         <!-- ============================================================== -->
         <div class="container-fluid">
             <!-- ============================================================== -->
-            <!-- Bread crumb and right sidebar toggle -->
-            <!-- ============================================================== -->
-            <div class="row page-titles">
-                <div class="col-md-5 align-self-center">
-                    <h3 class="text-themecolor">Dashboard 1</h3>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                        <li class="breadcrumb-item active">Dashboard 1</li>
-                    </ol>
-                </div>
-                <!-- <div class="col-md-7 align-self-center text-right d-none d-md-block">
-                     <button type="button" class="btn btn-info"><i class="fa fa-plus-circle"></i> Create New</button>
-                 </div>-->
-                <div class="">
-                    <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
-                </div>
-            </div>
+
             <!-- ==================== Content Home Begin ============================= -->
 
             <th:block layout:fragment="content_home">
