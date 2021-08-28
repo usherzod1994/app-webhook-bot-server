@@ -3,16 +3,13 @@ package com.example.appwebhookbotserver.payload;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotBlank;
+import org.telegram.telegrambots.meta.api.objects.Message;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReqCategory {
-    private Integer id;
-    @NotBlank
-    private String name;
+public class ResultTelegram {
+    private boolean ok;
 
-    private int parentId;
+    private Message result;
 }

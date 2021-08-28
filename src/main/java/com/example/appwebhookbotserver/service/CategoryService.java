@@ -3,6 +3,7 @@ package com.example.appwebhookbotserver.service;
 
 import com.example.appwebhookbotserver.entity.Category;
 import com.example.appwebhookbotserver.payload.ReqCategory;
+import com.example.appwebhookbotserver.payload.ReqUpdateCategory;
 import com.example.appwebhookbotserver.payload.ResCategory;
 import com.example.appwebhookbotserver.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,18 +42,31 @@ public class CategoryService {
     }
 
     public boolean save(ReqCategory reqCategory){
-        Optional<Category> optionalCategory = categoryRepository.findByName(reqCategory.getName());
-        if (optionalCategory.isPresent()){
-            return false;
+        if (reqCategory.getId() != null){
+            Optional<Category> categoryOptional = categoryRepository.findById(reqCategory.getId());
+            if (categoryOptional.isPresent()){
+                Category category = categoryOptional.get();
+                category.setParentId(reqCategory.getParentId());
+                category.setName(reqCategory.getName());
+                categoryRepository.save(category);
+                return true;
+            }else {
+                return false;
+            }
+        }else {
+            Optional<Category> optionalCategory = categoryRepository.findByName(reqCategory.getName());
+            if (optionalCategory.isPresent() && optionalCategory.get().getParentId() == reqCategory.getParentId()){
+                return false;
+            }
+            Category category = new Category();
+            category.setId(getMaxId() + 1);
+            category.setName(reqCategory.getName());
+            if (reqCategory.getParentId() > 0){
+                category.setParentId(reqCategory.getParentId());
+            }
+            categoryRepository.save(category);
+            return true;
         }
-        Category category = new Category();
-        category.setId(getMaxId() + 1);
-        category.setName(reqCategory.getName());
-        if (reqCategory.getParentId() > 0){
-            category.setParentId(reqCategory.getParentId());
-        }
-        categoryRepository.save(category);
-        return true;
     }
 
     public int getMaxId() {
@@ -73,4 +87,5 @@ public class CategoryService {
             return false;
         }
     }
+
 }

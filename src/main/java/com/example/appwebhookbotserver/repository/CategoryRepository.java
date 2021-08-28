@@ -14,6 +14,12 @@ public interface CategoryRepository extends JpaRepository<Category, Integer> {
     @Query(value = " select * from category where deleted = false order by id", nativeQuery = true)
     List<Category> getCategories();
 
+    @Query(value = " select * from category where deleted = false and parent_id = 0 order by id", nativeQuery = true)
+    List<Category> getCreateCategories();
+
+    @Query(value = " select * from category where deleted = false and parent_id != 0 order by id", nativeQuery = true)
+    List<Category> getCreateProductCategories();
+
     @Query(value = "select count(*) from category",nativeQuery = true)
     Integer getCount();
 

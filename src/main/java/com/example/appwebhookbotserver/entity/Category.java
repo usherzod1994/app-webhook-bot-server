@@ -31,6 +31,8 @@ public class Category {
     @Column(nullable = false)
     private int parentId;
 
+    private boolean isChildProduct = false;
+
     private boolean deleted = false;
 
     public Category(Integer id, String name, int parentId) {

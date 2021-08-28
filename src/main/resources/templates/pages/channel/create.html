@@ -35,20 +35,21 @@
                     <h4 class="card-title">Category create</h4>
 <!--                    <h6 class="card-subtitle">Bootstrap Form Validation check the <a href="http://reactiveraven.github.io/jqBootstrapValidation/">official website </a></h6>-->
                     <!--/*@thymesVar id="reqCategory" type="reqCategory"*/-->
-                    <form th:action="@{/category/save}" th:object="${reqCategory}" method="post" class="m-t-40" novalidate>
+                    <form th:action="@{/channel/save}"  method="post" class="m-t-40" novalidate>
                         <div class="form-group">
-                            <label class="control-label">Select Parent Category Id <span class="text-danger">*</span></label>
-                            <select class="form-control custom-select" th:field="*{parentId}">
-                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <h5>Category Name <span class="text-danger">*</span></h5>
+                            <h5>Channel Or Group Name <span class="text-danger">*</span></h5>
                             <div class="controls">
-                                <input type="text" th:field="*{name}" name="name" id="name" class="form-control" required data-validation-required-message="This field is required">
-                                <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                                <input type="text" name="name" id="name" class="form-control" required data-validation-required-message="This field is required">
                             </div>
 <!--                            <div class="form-control-feedback"><small>Add <code>required</code> attribute to field for required validation.</small></div>-->
+                        </div>
+
+                        <div class="form-group">
+                            <h5>Channel Or Group Chat Id <span class="text-danger">*</span></h5>
+                            <div class="controls">
+                                <input type="text" name="chatId" id="chatId" class="form-control" required data-validation-required-message="This field is required">
+                            </div>
+                            <!--                            <div class="form-control-feedback"><small>Add <code>required</code> attribute to field for required validation.</small></div>-->
                         </div>
                         <div class="text-xs-right">
                             <button type="submit" class="btn btn-info float-right">Save</button>

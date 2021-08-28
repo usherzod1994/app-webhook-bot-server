@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5"
       layout:decorate="~{basic}">
 
 <th:block layout:fragment="content_styles">
@@ -14,10 +13,10 @@
     <!-- ============================================================== -->
     <div class="row page-titles">
         <div class="col-md-5 align-self-center">
-            <h3 class="text-themecolor">Category Update</h3>
+            <h3 class="text-themecolor">Product Create</h3>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
-                <li class="breadcrumb-item active">Category Update</li>
+                <li class="breadcrumb-item active">Product Create</li>
             </ol>
         </div>
         <!-- <div class="col-md-7 align-self-center text-right d-none d-md-block">
@@ -35,23 +34,47 @@
                     <h4 class="card-title">Category create</h4>
                     <!--                    <h6 class="card-subtitle">Bootstrap Form Validation check the <a href="http://reactiveraven.github.io/jqBootstrapValidation/">official website </a></h6>-->
                     <!--/*@thymesVar id="reqCategory" type="reqCategory"*/-->
-                    <form th:action="@{/category/save}" th:object="${reqCategory}" method="post" class="m-t-40" novalidate>
+<!--                    th:object="${reqProduct}"-->
+                    <form th:action="@{/product/save}"  method="post" class="m-t-40" enctype="multipart/form-data" novalidate>
+                        <div class="form-group">
+                            <label class="control-label">Select Chat Id <span class="text-danger">*</span></label>
+                            <select class="form-control custom-select" name="chatId">
+                                <!--/*@thymesVar id="categories" type="categories"*/-->
+                                <!--/*@thymesVar id="channel.chatId" type="String"*/-->
+                                <option th:each="channel : ${channels}" th:value="${channel.chatId}" th:text="${channel.name}"></option>
+                            </select>
+                        </div>
+
                         <div class="form-group">
                             <label class="control-label">Select Parent Category Id <span class="text-danger">*</span></label>
-                            <select class="form-control custom-select" th:field="*{parentId}">
-                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"
-                                ></option>
+                            <select class="form-control custom-select" name="categoryId">
+                                <!--/*@thymesVar id="categories" type="categories"*/-->
+                                <option th:each="category : ${categories}" th:value="${category.id}" th:text="${category.name}"></option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <h5>Category Name <span class="text-danger">*</span></h5>
+                            <h5>Product Name <span class="text-danger">*</span></h5>
                             <div class="controls">
-                                <input type="text" th:field="*{name}" name="name" id="name" class="form-control" required data-validation-required-message="This field is required">
-                                <span class="text-danger" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></span>
+                                <input type="text" name="name" id="name" class="form-control" required data-validation-required-message="This field is required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <h5>Product description <span class="text-danger">*</span></h5>
+                            <div class="controls">
+                                <input type="text" name="description" id="description" class="form-control" required data-validation-required-message="This field is required">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <h5>Product File <span class="text-danger">*</span></h5>
+                            <div class="controls">
+                                <input type="file" id="file"
+                                       class="form-control"
+                                       name="file"
+                                       enctype="multipart/form-data"
+                                />
                             </div>
                             <!--                            <div class="form-control-feedback"><small>Add <code>required</code> attribute to field for required validation.</small></div>-->
                         </div>
-                        <input type="hidden" id="id" th:field="*{id}">
                         <div class="text-xs-right">
                             <button type="submit" class="btn btn-info float-right">Save</button>
                         </div>
@@ -60,7 +83,6 @@
             </div>
         </div>
     </div>
-
 </th:block>
 
 <th:block layout:fragment="content_js">

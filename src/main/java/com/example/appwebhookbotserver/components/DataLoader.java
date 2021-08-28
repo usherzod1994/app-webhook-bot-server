@@ -1,5 +1,6 @@
 package com.example.appwebhookbotserver.components;
 
+import com.example.appwebhookbotserver.entity.Role;
 import com.example.appwebhookbotserver.entity.User;
 import com.example.appwebhookbotserver.entity.enums.RoleName;
 import com.example.appwebhookbotserver.repository.RoleRepository;
@@ -30,6 +31,11 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (initMode.equals("always")) {
+
+            roleRepository.save(new Role(RoleName.ROLE_ADMIN));
+            roleRepository.save(new Role(RoleName.ROLE_MANAGER));
+            roleRepository.save(new Role(RoleName.ROLE_USER));
+
             userRepository.save(new User(
                     "+998993631856",
                     passwordEncoder.encode("root123"),
@@ -53,6 +59,8 @@ public class DataLoader implements CommandLineRunner {
                     "manager",
                     roleRepository.findAllByRole(RoleName.ROLE_MANAGER)
             ));
+
+
 
             System.out.println(passwordEncoder.encode("root123"));
         }

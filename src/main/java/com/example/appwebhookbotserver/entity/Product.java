@@ -21,18 +21,18 @@ public class Product extends AbsEntity {
     @Column(columnDefinition = "text")
     private String description;
 
-    private String filePath;
-
-    private String fullName;
+    private String fileId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Category category;
 
-    private boolean isActive = true;
-
-    private boolean isDiscount = false;
-
     private boolean isDeleted = false;
 
+    public Product(String name, String description, String fileId, Category category) {
+        this.name = name;
+        this.description = description;
+        this.fileId = fileId;
+        this.category = category;
+    }
 }
 
