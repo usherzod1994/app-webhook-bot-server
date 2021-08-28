@@ -47,6 +47,12 @@ public class ProductController {
 
     private final ProductService productService;
 
+    @PostMapping("/test")
+    public void sendVideo(@RequestParam String chatId, @RequestParam String fileId) throws IOException {
+        ResultTelegram resultTelegram = telegramFeign.sendVideoToUser("bot" + RestConstants.TOKEN, "BAACAgIAAxkBAAO_YSo8Z6I8cUxVs600ndWHaqYQl3sAAnoNAAK_oVBJz3dJ_-Q5s5YgBA", chatId);
+        System.out.println(resultTelegram);
+    }
+
     @PostMapping("/save")
     public String saveProduct(@RequestParam String name,@RequestParam String description,
                               @RequestParam int categoryId,@RequestParam String chatId,

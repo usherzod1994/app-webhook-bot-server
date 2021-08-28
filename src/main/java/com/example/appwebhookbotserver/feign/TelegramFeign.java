@@ -18,6 +18,11 @@ public interface TelegramFeign {
     @Headers("Content-Type: multipart/form-data")
     ResultTelegram sendVideoToUser(@PathVariable String path, @RequestPart(value = "video") MultipartFile video,@RequestParam (value = "chat_id") String chat_id)throws IOException;
 
+
+    @PostMapping(value = "{path}/sendVideo")
+    ResultTelegram sendVideoToUser(@PathVariable String path, @RequestParam(value = "video") String video,@RequestParam (value = "chat_id") String chat_id)throws IOException;
+
+
     @PostMapping(value = "{path}/sendPhoto", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Headers("Content-Type: multipart/form-data")
     ResultTelegram sendPhotoToUser(@PathVariable String path, @RequestPart(value = "photo") MultipartFile photo,@RequestParam (value = "chat_id") String chat_id)throws IOException;

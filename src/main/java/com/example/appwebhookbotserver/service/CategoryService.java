@@ -17,6 +17,11 @@ public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+
+    public List<Category> getCategories(){
+        return categoryRepository.getCreateCategories();
+    }
+
     public List<ResCategory> getAllCategores(){
         List<Category> categoriesList = categoryRepository.getCategories();
         Map<Integer, ResCategory> resCategoryMap = new HashMap<>();
