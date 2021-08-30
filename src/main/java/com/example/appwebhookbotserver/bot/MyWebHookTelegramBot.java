@@ -1,8 +1,10 @@
 package com.example.appwebhookbotserver.bot;
 
 
+import com.example.appwebhookbotserver.entity.Customer;
 import com.example.appwebhookbotserver.feign.TelegramFeign;
 import com.example.appwebhookbotserver.payload.ResultTelegram;
+import com.example.appwebhookbotserver.repository.CustomerRepository;
 import com.example.appwebhookbotserver.service.TelegramService;
 import com.example.appwebhookbotserver.utils.RestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.io.IOException;
+import java.util.Optional;
 
 @Component
 public class MyWebHookTelegramBot extends TelegramLongPollingBot {
@@ -29,6 +32,9 @@ public class MyWebHookTelegramBot extends TelegramLongPollingBot {
 
     @Autowired
     private TelegramFeign telegramFeign;
+
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Override
     public String getBotUsername() {
@@ -50,23 +56,37 @@ public class MyWebHookTelegramBot extends TelegramLongPollingBot {
             if (message.hasText()) {
                 if (text.equals("/start")) {
                     try {
-//                        execute(telegramService.welcomeToTheBot(update));
-                        execute(telegramService.mainMenu(update));
+                        execute(telegramService.menuCategory(update));
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
-                }else if(text.equals("test")){
-                    try {
+                }else {
+                    if(text.equals("test")){
+                        try {
 //                        BAACAgIAAxkBAAPCYSpE1tutDdNKVDo9W_fL4cFvvEMAAoYNAAK_oVBJ20xGEVtC5LogBA
 //                        BAACAgIAAxkBAAO_YSo8Z6I8cUxVs600ndWHaqYQl3sAAnoNAAK_oVBJz3dJ_-Q5s5YgBA
-                        ResultTelegram resultTelegram = telegramFeign.sendVideoToUser("bot" + RestConstants.TOKEN, "BAACAgIAAxkBAAPCYSpE1tutDdNKVDo9W_fL4cFvvEMAAoYNAAK_oVBJ20xGEVtC5LogBA", update.getMessage().getChatId().toString());
-                        System.out.println(resultTelegram);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                            ResultTelegram resultTelegram = telegramFeign.sendVideoToUser("bot" + RestConstants.TOKEN, "BAACAgIAAxkBAAPCYSpE1tutDdNKVDo9W_fL4cFvvEMAAoYNAAK_oVBJ20xGEVtC5LogBA", update.getMessage().getChatId().toString());
+                            System.out.println(resultTelegram);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }else if (text.equals(Constant.BACK_UZ)){
+
                     }
-
-                }else {
-
+                    else {
+                        Optional<Customer> optionalCustomer = customerRepository.findByChatId(update.getMessage().getChatId());
+                        if (optionalCustomer.isPresent()){
+                            Customer customer = optionalCustomer.get();
+                            if (customer.getState().equals(BotState.CATEGORY_MENU_STATE)){
+                                try {
+                                    execute(telegramService.childMenuByCategory(update));
+                                } catch (TelegramApiException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            System.out.println(update);
+                        }
+                    }
                 }
             }
         }else if (update.hasChatMember()){

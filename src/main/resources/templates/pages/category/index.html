@@ -44,6 +44,8 @@
                                     <th>#</th>
                                     <th>Name</th>
                                     <th>Parent Id</th>
+                                    <th>Child Category</th>
+                                    <th>Child Product</th>
                                     <th>Operations</th>
                                 </tr>
                                 </thead>
@@ -52,6 +54,8 @@
                                     <td th:text="${category.id}"></td>
                                     <td th:text="${category.name}"></td>
                                     <td th:text="${category.parentId}"></td>
+                                    <td th:text="${category.isChildCategory()}"></td>
+                                    <td th:text="${category.isChildProduct()}"></td>
                                     <td>
                                         <a th:href="@{/category/update/{id}(id=${category.id})}" class="btn btn-success">
                                             <i class="fa fa-edit" aria-hidden="true"></i> Edit

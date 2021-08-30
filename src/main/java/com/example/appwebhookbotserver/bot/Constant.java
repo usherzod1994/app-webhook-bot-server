@@ -12,4 +12,10 @@ public interface Constant {
     String SETTINGS_TEXT_UZ = "⚙️ Sozlamalar";
     String BRANCH_TEXT_BUTTON_UZ = "\uD83C\uDFE2*Filial&";
     String CANCELLED_UZ = "⬅ Orqaga";
+
+    String SELECT_FOOD_BY_CATEGORY_TEXT_UZ = "Mahsulot turini tanlang";
+
+    String FOOD_NOT_UZ = "Hozirgi vaqtda ushbu mahsulot mavjud emas";
+
+    String BACK_UZ = "⬅️ Orqaga";
 }

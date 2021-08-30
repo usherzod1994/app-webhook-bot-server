@@ -8,4 +8,7 @@ public interface TelegramService {
     SendMessage shareContact(Update update);
     SendMessage welcomeToTheBot(Update update);
     SendMessage mainMenu(Update update);
+    SendMessage menuCategory(Update update);
+    SendMessage childMenuByCategory(Update update);
+    SendMessage printProducts(Update update);
 }

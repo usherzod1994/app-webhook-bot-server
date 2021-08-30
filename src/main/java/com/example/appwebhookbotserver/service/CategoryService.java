@@ -18,11 +18,11 @@ public class CategoryService {
     private CategoryRepository categoryRepository;
 
 
-    public List<Category> getCategories(){
-        return categoryRepository.getCreateCategories();
+    public List<Category> getCategories() {
+        return categoryRepository.getParentCategories();
     }
 
-    public List<ResCategory> getAllCategores(){
+    public List<ResCategory> getAllCategores() {
         List<Category> categoriesList = categoryRepository.getCategories();
         Map<Integer, ResCategory> resCategoryMap = new HashMap<>();
 
@@ -34,10 +34,10 @@ public class CategoryService {
         Set<Integer> integers = resCategoryMap.keySet();
         integers.forEach(integer -> {
             ResCategory resCategory = resCategoryMap.get(integer);
-            if (resCategory.getParentId() == 0){
+            if (resCategory.getParentId() == 0) {
                 reqCategories.add(resCategoryMap.get(integer));
-            }else {
-                if (resCategoryMap.containsKey(resCategory.getParentId())){
+            } else {
+                if (resCategoryMap.containsKey(resCategory.getParentId())) {
                     resCategoryMap.get(resCategory.getParentId()).getChildren().add(resCategory);
                 }
             }
@@ -46,38 +46,52 @@ public class CategoryService {
 
     }
 
-    public boolean save(ReqCategory reqCategory){
-        if (reqCategory.getId() != null){
+    public boolean save(ReqCategory reqCategory) {
+        if (reqCategory.getId() != null) {
             Optional<Category> categoryOptional = categoryRepository.findById(reqCategory.getId());
-            if (categoryOptional.isPresent()){
+            if (categoryOptional.isPresent()) {
                 Category category = categoryOptional.get();
-                category.setParentId(reqCategory.getParentId());
-                category.setName(reqCategory.getName());
-                if (reqCategory.getParentId() != 0){
+
+                if (category.getParentId() != reqCategory.getParentId()) {
+                    int oldParentId = category.getParentId();
+                    category.setParentId(reqCategory.getParentId());
+                    category.setName(reqCategory.getName());
+                    categoryRepository.save(category);
                     Optional<Category> categoryOptionalParent = categoryRepository.findById(reqCategory.getParentId());
-                    if (categoryOptionalParent.isPresent()){
+                    if (categoryOptionalParent.isPresent()) {
                         Category category1 = categoryOptionalParent.get();
                         category1.setChildCategory(true);
                         categoryRepository.save(category1);
                     }
+                    Integer childCount = categoryRepository.getChildCount(oldParentId);
+                    if (childCount == 0) {
+                        Optional<Category> oldParentCategoryOptional = categoryRepository.findById(oldParentId);
+                        if (oldParentCategoryOptional.isPresent()) {
+                            Category oldCategory = oldParentCategoryOptional.get();
+                            oldCategory.setChildCategory(false);
+                            categoryRepository.save(oldCategory);
+                        }
+                    }
+                } else {
+                    category.setName(reqCategory.getName());
+                    categoryRepository.save(category);
                 }
-                categoryRepository.save(category);
                 return true;
-            }else {
+            } else {
                 return false;
             }
-        }else {
+        } else {
             Optional<Category> optionalCategory = categoryRepository.findByName(reqCategory.getName());
-            if (optionalCategory.isPresent() && optionalCategory.get().getParentId() == reqCategory.getParentId()){
+            if (optionalCategory.isPresent()) {
                 return false;
             }
             Category category = new Category();
             category.setId(getMaxId() + 1);
             category.setName(reqCategory.getName());
-            if (reqCategory.getParentId() > 0){
+            if (reqCategory.getParentId() > 0) {
                 category.setParentId(reqCategory.getParentId());
                 Optional<Category> categoryOptionalParent = categoryRepository.findById(reqCategory.getParentId());
-                if (categoryOptionalParent.isPresent()){
+                if (categoryOptionalParent.isPresent()) {
                     Category category1 = categoryOptionalParent.get();
                     category1.setChildCategory(true);
                     categoryRepository.save(category1);
@@ -89,7 +103,7 @@ public class CategoryService {
     }
 
     public int getMaxId() {
-        if (categoryRepository.getCount() == 0){
+        if (categoryRepository.getCount() == 0) {
             return 0;
         }
         return categoryRepository.getMaxId();
@@ -97,12 +111,12 @@ public class CategoryService {
 
     public boolean delete(int id) {
         Optional<Category> categoryOptional = categoryRepository.findById(id);
-        if (categoryOptional.isPresent()){
+        if (categoryOptional.isPresent()) {
             Category category = categoryOptional.get();
             category.setDeleted(true);
             categoryRepository.save(category);
             return true;
-        }else {
+        } else {
             return false;
         }
     }
