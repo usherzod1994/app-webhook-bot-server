@@ -53,6 +53,14 @@ public class CategoryService {
                 Category category = categoryOptional.get();
                 category.setParentId(reqCategory.getParentId());
                 category.setName(reqCategory.getName());
+                if (reqCategory.getParentId() != 0){
+                    Optional<Category> categoryOptionalParent = categoryRepository.findById(reqCategory.getParentId());
+                    if (categoryOptionalParent.isPresent()){
+                        Category category1 = categoryOptionalParent.get();
+                        category1.setChildCategory(true);
+                        categoryRepository.save(category1);
+                    }
+                }
                 categoryRepository.save(category);
                 return true;
             }else {
@@ -68,6 +76,12 @@ public class CategoryService {
             category.setName(reqCategory.getName());
             if (reqCategory.getParentId() > 0){
                 category.setParentId(reqCategory.getParentId());
+                Optional<Category> categoryOptionalParent = categoryRepository.findById(reqCategory.getParentId());
+                if (categoryOptionalParent.isPresent()){
+                    Category category1 = categoryOptionalParent.get();
+                    category1.setChildCategory(true);
+                    categoryRepository.save(category1);
+                }
             }
             categoryRepository.save(category);
             return true;

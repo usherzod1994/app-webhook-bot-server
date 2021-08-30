@@ -31,7 +31,11 @@ public class Category {
     @Column(nullable = false)
     private int parentId;
 
+    // child product bo'lsa isChildProduct ga true o'zlashtirib quyiladi
     private boolean isChildProduct = false;
+
+    // child category bo'lsa isChildCategory ga true o'zlashtirib quyiladi
+    private boolean isChildCategory = false;
 
     private boolean deleted = false;
 

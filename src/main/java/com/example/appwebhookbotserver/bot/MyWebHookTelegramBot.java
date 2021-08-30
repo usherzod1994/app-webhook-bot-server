@@ -24,7 +24,6 @@ public class MyWebHookTelegramBot extends TelegramLongPollingBot {
     @Value("${bot.path}")
     private String botPath;
 
-
     @Autowired
     private TelegramService telegramService;
 
@@ -65,6 +64,8 @@ public class MyWebHookTelegramBot extends TelegramLongPollingBot {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+
+                }else {
 
                 }
             }
