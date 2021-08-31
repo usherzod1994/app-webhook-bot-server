@@ -83,6 +83,16 @@ public class MyWebHookTelegramBot extends TelegramLongPollingBot {
                             }
                         });
                     }
+                    else if (text.equals(Constant.TOP_MENU)){
+                        Optional<Customer> optionalCustomer = customerRepository.findByChatId(update.getMessage().getChatId());
+                        optionalCustomer.ifPresent(customer -> {
+                            try {
+                                execute(telegramService.mainMenu(update));
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
                     else {
                         Optional<Customer> optionalCustomer = customerRepository.findByChatId(update.getMessage().getChatId());
                         if (optionalCustomer.isPresent()){

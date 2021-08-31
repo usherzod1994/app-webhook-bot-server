@@ -18,4 +18,8 @@ public interface Constant {
     String FOOD_NOT_UZ = "Hozirgi vaqtda ushbu mahsulot mavjud emas";
 
     String BACK_UZ = "⬅️ Orqaga";
+
+    String TOP_MENU = "⬆️ Asosiy Menyu";
+
+    String WRONG_WORD_ENTERED = "\uD83E\uDD14 Noto'g'ri so'z kiritildi";
 }

@@ -81,6 +81,7 @@ public class TelegramServiceImp implements TelegramService{
         customer.setState(BotState.CATEGORY_MENU_STATE);
         customer.setParentId(0);
         customerRepository.save(customer);
+        allCategories.sort(new CategoryComparator());
         for (int i = 0; i < allCategories.size(); i++) {
             Category category = allCategories.get(i);
             KeyboardButton keyboardButton = new KeyboardButton();
@@ -109,8 +110,11 @@ public class TelegramServiceImp implements TelegramService{
 
         KeyboardRow keyboardRowBack = new KeyboardRow();
         KeyboardButton keyboardButtonBack = new KeyboardButton();
+        KeyboardButton keyboardButtonTop = new KeyboardButton();
+        keyboardButtonTop.setText(Constant.TOP_MENU);
         keyboardButtonBack.setText(Constant.BACK_UZ);
         keyboardRowBack.add(keyboardButtonBack);
+        keyboardRowBack.add(keyboardButtonTop);
 
         Optional<Customer> optionalCustomer = customerRepository.findByChatId(update.getMessage().getChatId());
         if (optionalCustomer.isPresent()){
@@ -119,12 +123,13 @@ public class TelegramServiceImp implements TelegramService{
             customer.setState(BotState.CATEGORY_MENU_STATE);
             List<Category> allCategories = categoryRepository.findAllByParentId(customer.getParentId());
 //            Collections.sort(allCategories, new CategoryComparator());
+            allCategories.sort(new CategoryComparator());
 
 
             Optional<Category> optionalCategory = categoryRepository.findById(customer.getParentId());
             if (!optionalCategory.isPresent()) {
                 customer.setParentId(0);
-                allCategories.sort(new CategoryComparator());
+//                allCategories.sort(new CategoryComparator());
             }
 
             for (int i = 0; i < allCategories.size(); i++) {
@@ -169,8 +174,11 @@ public class TelegramServiceImp implements TelegramService{
         KeyboardRow keyboardRow = new KeyboardRow();
         KeyboardRow keyboardRowBack = new KeyboardRow();
         KeyboardButton keyboardButtonBack = new KeyboardButton();
+        KeyboardButton keyboardButtonTop = new KeyboardButton();
+        keyboardButtonTop.setText(Constant.TOP_MENU);
         keyboardButtonBack.setText(Constant.BACK_UZ);
         keyboardRowBack.add(keyboardButtonBack);
+        keyboardRowBack.add(keyboardButtonTop);
         Optional<Category> optionalCategory = categoryRepository.findByName(name);
 
         if (optionalCustomer.isPresent()){
@@ -180,6 +188,7 @@ public class TelegramServiceImp implements TelegramService{
                 Category category = optionalCategory.get();
                 customer.setParentId(category.getParentId());
                 List<Category> listCategory = categoryRepository.findAllByParentId(category.getId());
+                listCategory.sort(new CategoryComparator());
                 if (listCategory.size() > 0){
                     for (int i = 0; i < listCategory.size(); i++) {
                         Category category2 = listCategory.get(i);
@@ -194,8 +203,11 @@ public class TelegramServiceImp implements TelegramService{
                 }else {
                     sendMessage.setText(Constant.FOOD_NOT_UZ);
                 }
+                keyboardRows.add(keyboardRowBack);
+                replyKeyboardMarkup.setKeyboard(keyboardRows);
+                sendMessage.setReplyMarkup(replyKeyboardMarkup);
             }else {
-                sendMessage.setText("Kategoriylardan birini tanlang:");
+                sendMessage.setText(Constant.WRONG_WORD_ENTERED);
             }
 
             customer.setState(BotState.CATEGORY_MENU_STATE);
@@ -203,9 +215,7 @@ public class TelegramServiceImp implements TelegramService{
 
 
         }
-        keyboardRows.add(keyboardRowBack);
-        replyKeyboardMarkup.setKeyboard(keyboardRows);
-        sendMessage.setReplyMarkup(replyKeyboardMarkup);
+
         return sendMessage;
     }
 
