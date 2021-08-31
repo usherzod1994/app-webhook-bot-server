@@ -3,6 +3,7 @@ package com.example.appwebhookbotserver.service;
 import com.example.appwebhookbotserver.bot.BotState;
 import com.example.appwebhookbotserver.bot.Constant;
 import com.example.appwebhookbotserver.entity.Category;
+import com.example.appwebhookbotserver.entity.CategoryComparator;
 import com.example.appwebhookbotserver.entity.Customer;
 import com.example.appwebhookbotserver.payload.ResCategory;
 import com.example.appwebhookbotserver.repository.CategoryRepository;
@@ -17,9 +18,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMar
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TelegramServiceImp implements TelegramService{
@@ -68,41 +67,10 @@ public class TelegramServiceImp implements TelegramService{
     @Override
     public SendMessage mainMenu(Update update) {
 
-        List<Category> allCategories = categoryService.getCategories();
-
-
-        SendMessage sendMessage = new SendMessage();
-                sendMessage.setChatId(update.getMessage().getChatId().toString());
-                sendMessage.setParseMode(ParseMode.MARKDOWN);
-
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
-        replyKeyboardMarkup.setResizeKeyboard(true);
-        replyKeyboardMarkup.setSelective(true);
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
-        KeyboardRow keyboardRow = new KeyboardRow();
-        for (int i = 0; i < allCategories.size(); i++) {
-            Category category = allCategories.get(i);
-            KeyboardButton keyboardButton = new KeyboardButton();
-            keyboardButton.setText(category.getName());
-            keyboardRow.add(keyboardButton);
-            if (!(i%2==1 || allCategories.size()-1==i)) continue;
-            keyboardRows.add(keyboardRow);
-            keyboardRow = new KeyboardRow();
-        }
-        sendMessage.setText(Constant.LETS_GO_ORDER_UZ);
-        replyKeyboardMarkup.setKeyboard(keyboardRows);
-        sendMessage.setReplyMarkup(replyKeyboardMarkup);
-        return sendMessage;
-    }
-
-    @Override
-    public SendMessage menuCategory(Update update) {
         SendMessage sendMessage = new SendMessage();
         sendMessage.setChatId(update.getMessage().getChatId().toString());
         sendMessage.setParseMode(ParseMode.MARKDOWN);
-
         List<Category> allCategories = categoryService.getCategories();
-
         ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setSelective(true);
@@ -111,6 +79,7 @@ public class TelegramServiceImp implements TelegramService{
         Customer customer = customerRepository.findByChatId(update.getMessage().getChatId()).orElseGet(Customer::new);
         customer.setChatId(update.getMessage().getChatId());
         customer.setState(BotState.CATEGORY_MENU_STATE);
+        customer.setParentId(0);
         customerRepository.save(customer);
         for (int i = 0; i < allCategories.size(); i++) {
             Category category = allCategories.get(i);
@@ -121,6 +90,63 @@ public class TelegramServiceImp implements TelegramService{
             keyboardRows.add(keyboardRow);
             keyboardRow = new KeyboardRow();
         }
+        sendMessage.setText("Kategoriya tanlang");
+        replyKeyboardMarkup.setKeyboard(keyboardRows);
+        sendMessage.setReplyMarkup(replyKeyboardMarkup);
+        return sendMessage;
+    }
+
+    @Override
+    public SendMessage menuCategory(Update update) {
+        SendMessage sendMessage = new SendMessage();
+        sendMessage.setChatId(update.getMessage().getChatId().toString());
+        sendMessage.setParseMode(ParseMode.MARKDOWN);
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setSelective(true);
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+        KeyboardRow keyboardRow = new KeyboardRow();
+
+        KeyboardRow keyboardRowBack = new KeyboardRow();
+        KeyboardButton keyboardButtonBack = new KeyboardButton();
+        keyboardButtonBack.setText(Constant.BACK_UZ);
+        keyboardRowBack.add(keyboardButtonBack);
+
+        Optional<Customer> optionalCustomer = customerRepository.findByChatId(update.getMessage().getChatId());
+        if (optionalCustomer.isPresent()){
+            Customer customer = optionalCustomer.get();
+            customer.setChatId(update.getMessage().getChatId());
+            customer.setState(BotState.CATEGORY_MENU_STATE);
+            List<Category> allCategories = categoryRepository.findAllByParentId(customer.getParentId());
+//            Collections.sort(allCategories, new CategoryComparator());
+
+
+            Optional<Category> optionalCategory = categoryRepository.findById(customer.getParentId());
+            if (!optionalCategory.isPresent()) {
+                customer.setParentId(0);
+                allCategories.sort(new CategoryComparator());
+            }
+
+            for (int i = 0; i < allCategories.size(); i++) {
+                Category category = allCategories.get(i);
+                KeyboardButton keyboardButton = new KeyboardButton();
+                keyboardButton.setText(category.getName());
+                keyboardRow.add(keyboardButton);
+                if (!(i%2==1 || allCategories.size()-1==i)) continue;
+                keyboardRows.add(keyboardRow);
+                keyboardRow = new KeyboardRow();
+            }
+
+            if (optionalCategory.isPresent()){
+                Category category = optionalCategory.get();
+                customer.setParentId(category.getParentId());
+                keyboardRows.add(keyboardRowBack);
+            }
+
+
+            customerRepository.save(customer);
+        }
+
         sendMessage.setText("Kategoriya tanlang");
         replyKeyboardMarkup.setKeyboard(keyboardRows);
         sendMessage.setReplyMarkup(replyKeyboardMarkup);
@@ -147,31 +173,35 @@ public class TelegramServiceImp implements TelegramService{
         keyboardRowBack.add(keyboardButtonBack);
         Optional<Category> optionalCategory = categoryRepository.findByName(name);
 
-        if (optionalCategory.isPresent()){
-            Category category = optionalCategory.get();
-            List<Category> listCategory = categoryRepository.findAllByParentId(category.getId());
-
-            if (listCategory.size() > 0){
-                for (int i = 0; i < listCategory.size(); i++) {
-                    Category category2 = listCategory.get(i);
-                    KeyboardButton keyboardButton = new KeyboardButton();
-                    keyboardButton.setText(category2.getName());
-                    keyboardRow.add(keyboardButton);
-                    if (!(i%2==1 || listCategory.size()-1==i)) continue;
-                    keyboardRows.add(keyboardRow);
-                    keyboardRow = new KeyboardRow();
-                }
-                sendMessage.setText("Kategoriylardan birini tanlang:");
-            }else {
-                sendMessage.setText(Constant.FOOD_NOT_UZ);
-            }
-        }else {
-            sendMessage.setText("Kategoriylardan birini tanlang:");
-        }
-
         if (optionalCustomer.isPresent()){
             Customer customer = optionalCustomer.get();
+
+            if (optionalCategory.isPresent()){
+                Category category = optionalCategory.get();
+                customer.setParentId(category.getParentId());
+                List<Category> listCategory = categoryRepository.findAllByParentId(category.getId());
+                if (listCategory.size() > 0){
+                    for (int i = 0; i < listCategory.size(); i++) {
+                        Category category2 = listCategory.get(i);
+                        KeyboardButton keyboardButton = new KeyboardButton();
+                        keyboardButton.setText(category2.getName());
+                        keyboardRow.add(keyboardButton);
+                        if (!(i%2==1 || listCategory.size()-1==i)) continue;
+                        keyboardRows.add(keyboardRow);
+                        keyboardRow = new KeyboardRow();
+                    }
+                    sendMessage.setText("Kategoriylardan birini tanlang:");
+                }else {
+                    sendMessage.setText(Constant.FOOD_NOT_UZ);
+                }
+            }else {
+                sendMessage.setText("Kategoriylardan birini tanlang:");
+            }
+
             customer.setState(BotState.CATEGORY_MENU_STATE);
+            customerRepository.save(customer);
+
+
         }
         keyboardRows.add(keyboardRowBack);
         replyKeyboardMarkup.setKeyboard(keyboardRows);

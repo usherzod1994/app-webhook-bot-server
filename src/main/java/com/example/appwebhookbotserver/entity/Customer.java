@@ -25,12 +25,14 @@ public class Customer {
 
     private String state;
 
+    private int parentId;
+
     private String categoryName;
 
     private String status;
 
-    @ElementCollection
-    private List<Integer> parentId;
+//    @ElementCollection
+//    private List<Integer> parentId;
 
     private boolean isDeleted = false;
 

@@ -56,7 +56,7 @@ public class MyWebHookTelegramBot extends TelegramLongPollingBot {
             if (message.hasText()) {
                 if (text.equals("/start")) {
                     try {
-                        execute(telegramService.menuCategory(update));
+                        execute(telegramService.mainMenu(update));
                     } catch (TelegramApiException e) {
                         e.printStackTrace();
                     }
@@ -71,7 +71,17 @@ public class MyWebHookTelegramBot extends TelegramLongPollingBot {
                             e.printStackTrace();
                         }
                     }else if (text.equals(Constant.BACK_UZ)){
+                        Optional<Customer> optionalCustomer = customerRepository.findByChatId(update.getMessage().getChatId());
+                        optionalCustomer.ifPresent(customer -> {
+                            if (customer.getState().equals(BotState.CATEGORY_MENU_STATE)){
+                                try {
+                                    execute(telegramService.menuCategory(update));
+                                } catch (TelegramApiException e) {
+                                    e.printStackTrace();
+                                }
 
+                            }
+                        });
                     }
                     else {
                         Optional<Customer> optionalCustomer = customerRepository.findByChatId(update.getMessage().getChatId());
