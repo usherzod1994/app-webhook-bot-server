@@ -2,6 +2,7 @@ package com.example.appwebhookbotserver.controller;
 
 import com.example.appwebhookbotserver.entity.Category;
 import com.example.appwebhookbotserver.entity.ChannelAndGroup;
+import com.example.appwebhookbotserver.entity.FileStore;
 import com.example.appwebhookbotserver.entity.Product;
 import com.example.appwebhookbotserver.feign.TelegramFeign;
 import com.example.appwebhookbotserver.payload.ResultTelegram;
@@ -9,6 +10,7 @@ import com.example.appwebhookbotserver.payload.SendPhotoOwn;
 import com.example.appwebhookbotserver.repository.CategoryRepository;
 import com.example.appwebhookbotserver.repository.ProductRepository;
 import com.example.appwebhookbotserver.service.ChannelAndGroupService;
+import com.example.appwebhookbotserver.service.FileStoreService;
 import com.example.appwebhookbotserver.service.ProductService;
 import com.example.appwebhookbotserver.utils.RestConstants;
 import lombok.RequiredArgsConstructor;
@@ -47,6 +49,8 @@ public class ProductController {
 
     private final ProductService productService;
 
+    private final FileStoreService fileStoreService;
+
     @PostMapping("/test")
     public void sendVideo(@RequestParam String chatId, @RequestParam String fileId) throws IOException {
         ResultTelegram resultTelegram = telegramFeign.sendVideoToUser("bot" + RestConstants.TOKEN, "BAACAgIAAxkBAAO_YSo8Z6I8cUxVs600ndWHaqYQl3sAAnoNAAK_oVBJz3dJ_-Q5s5YgBA", chatId);
@@ -54,45 +58,69 @@ public class ProductController {
     }
 
     @PostMapping("/save")
-    public String saveProduct(@RequestParam String name,@RequestParam String description,
+    public String saveProduct(@RequestParam String fileId,@RequestParam String description,
                               @RequestParam int categoryId,@RequestParam String chatId,
-                              @RequestParam(name = "file") MultipartFile multipartFile,
-                              Model model){
+                              @RequestParam(name = "file") MultipartFile multipartFile){
 
-
-        if (name.isEmpty() || description.isEmpty() || chatId.isEmpty() || categoryId == 0 || !(multipartFile.getSize() > 0)){
+        if (fileId.isEmpty() && !(multipartFile.getSize() > 0) && chatId.isEmpty()){
             return "redirect:/product/create";
         }
 
-        if (name.trim().isEmpty() || description.trim().isEmpty() || chatId.trim().isEmpty()){
-            return "redirect:/product/create";
-        }
-        ResultTelegram resultTelegram = null;
-        if (multipartFile.getSize() > 0){
-            try {
-                resultTelegram = telegramFeign.sendVideoToUser("bot" + RestConstants.TOKEN, multipartFile,chatId.trim());
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (!fileId.isEmpty()){
+            if (description.isEmpty() || categoryId == 0){
+                return "redirect:/product/create";
             }
-            System.out.println(resultTelegram);
-        }
-
-        Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
-        if (optionalCategory.isPresent() && resultTelegram != null){
-            Product product = new Product(name,description, resultTelegram.getResult().getVideo().getFileId(), optionalCategory.get());
-            productService.save(product);
+            Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+            if (optionalCategory.isPresent()){
+                System.out.println("--------------------------------------------");
+                System.out.println(description);
+                System.out.println(fileId);
+                System.out.println("--------------------------------------------");
+                String s1 = description.replaceAll("<div>", "");
+                String s = s1.replaceAll("</div>", "");
+                productService.save(new Product(s, fileId, optionalCategory.get()));
+            }else {
+                return "redirect:/product/create";
+            }
             return "redirect:/product/list";
         }else {
-            return "redirect:/product/create";
+            if (description.isEmpty() || chatId.isEmpty() || categoryId == 0 || !(multipartFile.getSize() > 0)){
+                return "redirect:/product/create";
+            }
+
+            if (description.trim().isEmpty() || chatId.trim().isEmpty()){
+                return "redirect:/product/create";
+            }
+            ResultTelegram resultTelegram = null;
+            if (multipartFile.getSize() > 0){
+                try {
+                    resultTelegram = telegramFeign.sendVideoToUser("bot" + RestConstants.TOKEN, multipartFile,chatId.trim());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                System.out.println(resultTelegram);
+            }
+
+            Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
+            if (optionalCategory.isPresent() && resultTelegram != null){
+                Product product = new Product(description, resultTelegram.getResult().getVideo().getFileId(), optionalCategory.get());
+                productService.save(product);
+                return "redirect:/product/list";
+            }else {
+                return "redirect:/product/create";
+            }
         }
+
     }
 
     @GetMapping("/create")
     public String createProduct(Model modelAttribute){
         List<Category> all = categoryRepository.getCreateProductCategories();
         List<ChannelAndGroup> allChannel = channelAndGroupService.getAllChannel();
+        List<FileStore> files = fileStoreService.getAllFiles();
         modelAttribute.addAttribute("categories", all);
         modelAttribute.addAttribute("channels", allChannel);
+        modelAttribute.addAttribute("files", files);
         return "pages/product/create";
     }
 

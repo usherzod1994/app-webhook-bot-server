@@ -15,9 +15,6 @@ import javax.persistence.*;
 @Entity
 public class Product extends AbsEntity {
 
-    @Column(nullable = false)
-    private String name;
-
     @Column(columnDefinition = "text")
     private String description;
 
@@ -28,8 +25,7 @@ public class Product extends AbsEntity {
 
     private boolean isDeleted = false;
 
-    public Product(String name, String description, String fileId, Category category) {
-        this.name = name;
+    public Product(String description, String fileId, Category category) {
         this.description = description;
         this.fileId = fileId;
         this.category = category;

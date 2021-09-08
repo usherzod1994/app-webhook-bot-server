@@ -4,7 +4,8 @@
       layout:decorate="~{basic}">
 
 <th:block layout:fragment="content_styles">
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets/node_modules/html5-editor/bootstrap-wysihtml5.css" />
+
 </th:block>
 
 <th:block layout:fragment="content_home">
@@ -40,11 +41,18 @@
                             <label class="control-label">Select Chat Id <span class="text-danger">*</span></label>
                             <select class="form-control custom-select" name="chatId">
                                 <!--/*@thymesVar id="categories" type="categories"*/-->
-                                <!--/*@thymesVar id="channel.chatId" type="String"*/-->
+                                /*@thymesVar id="channel.chatId" type="String"*/
                                 <option th:each="channel : ${channels}" th:value="${channel.chatId}" th:text="${channel.name}"></option>
                             </select>
                         </div>
 
+                        <div class="form-group">
+                            <label class="control-label">Select Video <span class="text-danger">*</span></label>
+                            <select class="form-control custom-select" name="fileId">
+                                <!--/*@thymesVar id="categories" type="categories"*/-->
+                                <option th:each="file : ${files}" th:value="${file.fileId}" th:text="${file.caption}"></option>
+                            </select>
+                        </div>
                         <div class="form-group">
                             <label class="control-label">Select Parent Category Id <span class="text-danger">*</span></label>
                             <select class="form-control custom-select" name="categoryId">
@@ -53,16 +61,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <h5>Product Name <span class="text-danger">*</span></h5>
-                            <div class="controls">
-                                <input type="text" name="name" id="name" class="form-control" required data-validation-required-message="This field is required">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <h5>Product description <span class="text-danger">*</span></h5>
-                            <div class="controls">
-                                <input type="text" name="description" id="description" class="form-control" required data-validation-required-message="This field is required">
-                            </div>
+                            <textarea class="textarea_editor form-control" name="description" rows="15" placeholder="Enter text ..."></textarea>
                         </div>
                         <div class="form-group">
                             <h5>Product File <span class="text-danger">*</span></h5>
@@ -87,11 +86,45 @@
 
 <th:block layout:fragment="content_js">
     <script src="/assets/js/validation.js"></script>
+
     <script>
         ! function(window, document, $) {
             "use strict";
             $("input,select,textarea").not("[type=submit]").jqBootstrapValidation();
+
         }(window, document, jQuery);
+
+
     </script>
+
+    <script src="/assets/node_modules/html5-editor/wysihtml5-0.3.0.js"></script>
+    <script src="/assets/node_modules/html5-editor/bootstrap-wysihtml5.js"></script>
+    <script>
+        $(function() {
+
+            $('.textarea_editor').wysihtml5({
+                link:true,
+                image:false,
+                "font-styles":false,
+                emphasis:true,
+                lists:false,
+                parserRules: {
+                    tags: {
+                        "b":  {},
+                        "i":  {},
+                        "s":  {},
+                        "u":  {},
+                        "br": {},
+                        "a":  {
+
+                        },
+                    }
+                }
+            });
+
+
+        });
+    </script>
+
 </th:block>
 </html>
