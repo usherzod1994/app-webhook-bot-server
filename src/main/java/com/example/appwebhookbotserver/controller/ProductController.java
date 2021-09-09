@@ -60,7 +60,13 @@ public class ProductController {
     @PostMapping("/save")
     public String saveProduct(@RequestParam String fileId,@RequestParam String description,
                               @RequestParam int categoryId,@RequestParam String chatId,
+                              @RequestParam String youtubeLink,@RequestParam String youtubeLinkName,
                               @RequestParam(name = "file") MultipartFile multipartFile){
+
+        String link = "";
+        if (!youtubeLink.isEmpty() && !youtubeLinkName.isEmpty()){
+            link = "<a href='"+youtubeLink+"'>"+youtubeLinkName+"</a>";
+        }
 
         if (fileId.isEmpty() && !(multipartFile.getSize() > 0) && chatId.isEmpty()){
             return "redirect:/product/create";
@@ -72,13 +78,12 @@ public class ProductController {
             }
             Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
             if (optionalCategory.isPresent()){
-                System.out.println("--------------------------------------------");
-                System.out.println(description);
-                System.out.println(fileId);
-                System.out.println("--------------------------------------------");
-                String s1 = description.replaceAll("<div>", "");
-                String s = s1.replaceAll("</div>", "");
-                productService.save(new Product(s, fileId, optionalCategory.get()));
+                String newDesc = description.replaceAll("<br>","\n");
+
+                if (!link.isEmpty()){
+                    newDesc += "\n"+link;
+                }
+                productService.save(new Product(newDesc, fileId, optionalCategory.get()));
             }else {
                 return "redirect:/product/create";
             }
@@ -101,9 +106,15 @@ public class ProductController {
                 System.out.println(resultTelegram);
             }
 
+            String newDesc = description.replaceAll("<br>","\n");
+
+            if (!link.isEmpty()){
+                newDesc += "\n"+link;
+            }
+
             Optional<Category> optionalCategory = categoryRepository.findById(categoryId);
             if (optionalCategory.isPresent() && resultTelegram != null){
-                Product product = new Product(description, resultTelegram.getResult().getVideo().getFileId(), optionalCategory.get());
+                Product product = new Product(newDesc, resultTelegram.getResult().getVideo().getFileId(), optionalCategory.get());
                 productService.save(product);
                 return "redirect:/product/list";
             }else {

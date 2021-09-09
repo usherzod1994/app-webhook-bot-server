@@ -27,6 +27,8 @@ public class Customer {
 
     private int parentId;
 
+    private int categoryId;
+
     private String categoryName;
 
     private String status;

@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Data
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
+//@EntityListeners(AuditingEntityListener.class)
 public abstract class AbsEntity {
     @Id
     @Type(type = "org.hibernate.type.PostgresUUIDType")
@@ -31,13 +31,13 @@ public abstract class AbsEntity {
     @Column(nullable = false)
     private Timestamp updatedAt;
 
-    @CreatedBy
+    /*@CreatedBy
     @Column(name = "created_by", updatable = false)
     private UUID createdBy;
 
 
     @LastModifiedBy
     @Column(name = "updated_by")
-    private UUID updatedBy;
+    private UUID updatedBy;*/
 
 }

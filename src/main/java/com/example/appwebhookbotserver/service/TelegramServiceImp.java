@@ -201,6 +201,7 @@ public class TelegramServiceImp implements TelegramService{
                     }
                     sendMessage.setText("Kategoriylardan birini tanlang:");
                 }else {
+
                     sendMessage.setText(Constant.FOOD_NOT_UZ);
                 }
                 keyboardRows.add(keyboardRowBack);

@@ -19,7 +19,7 @@ import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
+//@EntityListeners(AuditingEntityListener.class)
 @Entity
 public class Category {
     @Id
@@ -53,13 +53,13 @@ public class Category {
     @Column(nullable = false)
     private Timestamp updatedAt;
 
-    @CreatedBy
+   /* @CreatedBy
     @Column(name = "created_by")
     private UUID createdBy;
 
 
     @LastModifiedBy
     @Column(name = "updated_by")
-    private UUID updatedBy;
+    private UUID updatedBy;*/
 }
 

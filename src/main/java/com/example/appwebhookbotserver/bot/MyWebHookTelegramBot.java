@@ -110,7 +110,7 @@ public class MyWebHookTelegramBot extends TelegramLongPollingBot {
                         sendMessage.setChatId(update.getMessage().getChatId().toString());
                         sendMessage.setParseMode(ParseMode.HTML);
                         String str = "<b>sdsdsds<br><br><i>eeeeeeeeee</i></b> <br><br><br><br> https://www.youtube.com/watch?v=uGLfjpkk208&list=RDGMEMQ1dJ7wXfLlqCjwV0xfSNbAVMuGLfjpkk208&start_radio=1";
-                        String str2 = "<a target=\"_blank\" rel=\"nofollow\" href=\"https://www.youtube.com/watch?v=uGLfjpkk208&amp;list=RDGMEMQ1dJ7wXfLlqCjwV0xfSNbAVMuGLfjpkk208&amp;start_radio=1\">https://www.youtube.com/watch?v=uGLfjpkk208&amp;list=RDGMEMQ1dJ7wXfLlqCjwV0xfSNbAVMuGLfjpkk208&amp;start_radio=1</a><br><br><b><i>bu test uchun endi</i></b><br><br><br><u>hi</u>";
+                        String str2 = "<a href='https://www.youtube.com/watch?v=uGLfjpkk208&amp;list=RDGMEMQ1dJ7wXfLlqCjwV0xfSNbAVMuGLfjpkk208&amp;start_radio=1'>\uD83D\uDC49Kanalga o'tish </a><br><br><b><i>bu test uchun endi</i></b><br><br><br><u>hi</u><br><br>Telegram kanali:  @ingliz0";
                         sendMessage.setText(str2.replaceAll("<br>","\n"));
                         sendMessage.setDisableWebPagePreview(true);
 
